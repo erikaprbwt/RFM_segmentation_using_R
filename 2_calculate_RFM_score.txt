@@ -1,0 +1,68 @@
+#calculate Recency, Frequency and Monetary (RFM)
+library(dplyr)
+analysis_date=max(data$OrderDate)
+rfm_df=data %>% group_by(CustomerID) %>% summarise(Recency=as.numeric(analysis_date-max(OrderDate)), Frequency = n(), Monetary = sum(data$Sales))
+str(rfm_df)
+
+##output:
+##tibble [793 x 4] (S3: tbl_df/tbl/data.frame)
+## $ CustomerID: chr [1:793] "AA-10315" "AA-10375" "AA-10480" "AA-10645" ...
+## $ Recency   : num [1:793] 184 19 259 55 415 54 41 41 25 166 ...
+## $ Frequency : int [1:793] 11 15 12 18 6 18 20 12 14 14 ...
+## $ Monetary  : num [1:793] 2297201 2297201 2297201 2297201 2297201 ...
+
+#grouping "Monetary" by "CustomerID" do not work, so aggregate must be done
+agg_sum=aggregate(data$Sales,by=list(data$CustomerID),FUN=sum)
+str(agg_sum)
+
+##output:
+##'data.frame':	793 obs. of  2 variables:
+## $ Group.1: chr  "AA-10315" "AA-10375" "AA-10480" "AA-10645" ...
+## $ x      : num  5564 1056 1791 5087 886 ...
+
+#Replacing "Monetary" values in rfm_df with the result of aggregate (field "x" in agg_sum)
+rfm_df$Monetary=agg_sum$x
+
+#creating density plots of each RFM quantities
+library(ggplot2)
+library(gridExtra)
+r=ggplot(rfm_df)+geom_density(aes(x=Recency))
+f=ggplot(rfm_df)+geom_density(aes(x=Frequency)) 
+m=ggplot(rfm_df)+geom_density(aes(x=Monetary))
+grid.arrange(r,f,m,nrow=3)
+
+#creating R_score, F_score, M_score with the values between 1 to 4
+summary(rfm_df)
+
+##output:
+##  CustomerID           Recency         Frequency       Monetary        
+## Length:793         Min.   :   0.0   Min.   : 1.0   Min.   :    4.833  
+## Class :character   1st Qu.:  30.0   1st Qu.: 8.0   1st Qu.: 1146.050  
+## Mode  :character   Median :  75.0   Median :12.0   Median : 2256.394  
+##                    Mean   : 146.8   Mean   :12.6   Mean   : 2896.848  
+##                    3rd Qu.: 183.0   3rd Qu.:16.0   3rd Qu.: 3785.276  
+##                    Max.   :1165.0   Max.   :37.0   Max.   :25043.050  
+
+rfm_df$R_score=0
+rfm_df$R_score[rfm_df$Recency>=183]=1
+rfm_df$R_score[rfm_df$Recency>=75 & rfm_df$Recency<183]=2
+rfm_df$R_score[rfm_df$Recency>=30 & rfm_df$Recency<75]=3
+rfm_df$R_score[rfm_df$Recency<30]=4
+
+rfm_df$F_score=0
+rfm_df$F_score[rfm_df$Frequency>=16]=4
+rfm_df$F_score[rfm_df$Frequency>=12 & rfm_df$Frequency<16]=3
+rfm_df$F_score[rfm_df$Frequency>=8 & rfm_df$Frequency<12]=2
+rfm_df$F_score[rfm_df$Frequency<8]=1
+
+rfm_df$M_score=0
+rfm_df$M_score[rfm_df$Monetary>=3785.276]=4
+rfm_df$M_score[rfm_df$Monetary>=2256.394 & rfm_df$Monetary<3785.276]=3
+rfm_df$M_score[rfm_df$Monetary>=1146.050 & rfm_df$Monetary<2256.394]=2
+rfm_df$M_score[rfm_df$Monetary<1146.050]=1
+
+#creating RFM_score with the values between 111 to 444
+rfm_df=rfm_df %>% mutate (RFM_score = 100*R_score + 10*F_score + M_score)
+
+
+

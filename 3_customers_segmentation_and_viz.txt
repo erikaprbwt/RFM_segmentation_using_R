@@ -1,0 +1,38 @@
+#creating customer segmentation labels
+rfm_df$Segment="0"
+rfm_df$Segment[which(rfm_df$RFM_score %in% c(444,434,443, 344, 442, 244, 424, 441))] ="Loyalists"
+rfm_df$Segment[which(rfm_df$RFM_score %in% c(332,333,342, 343, 334, 412,413,414,431,432,441,421,422,423, 424, 433 ))] = "Potential Loyalists"
+rfm_df$Segment[which(rfm_df$RFM_score %in% c(233,234, 241,311, 312, 313,314,321,322,323,324, 331,  341))] = "Promising"
+rfm_df$Segment[which(rfm_df$RFM_score %in% c(124, 133, 134, 142, 143, 144, 214,224,234, 242, 243, 232 ))] = "Hesitant"
+rfm_df$Segment[which(rfm_df$RFM_score %in% c(122, 123,131 ,132, 141, 212, 213, 221, 222, 223, 231 ))] = "Need attention"
+rfm_df$Segment[which(rfm_df$RFM_score %in% c(111, 112, 113, 114, 121, 131, 211, 311, 411 ))]="Detractors"
+table(rfm_df$Segment)
+
+##output:
+##         Detractors            Hesitant           Loyalists      Need attention Potential Loyalists 
+##                160                 112                 146                 123                 162 
+##          Promising 
+##                 90
+
+#data viz using barplot
+ggplot(rfm_df)+geom_bar(aes(x=Segment, fill=Segment))+theme(axis.text.x=element_text(angle=90,hjust=1))+labs(title="Barplot for Customer Segmetation")
+
+#barplot reordered by percentage
+library(scales)
+plotdata=rfm_df %>% count(Segment) %>% mutate(pcnt=n/sum(n), pcntlab=paste(round(pcnt*100),"%"))
+ggplot(plotdata, aes(x = reorder(Segment, -pcnt),y=pcnt))+geom_bar(stat="identity",fill="#f68080")+theme(axis.text.x=element_text(angle=90,hjust=1))+
+geom_text(aes(label=pcntlab), vjust=-0.25)+scale_y_continuous(labels=percent)+labs(x="Segment", y= "Percent", title="Barplot for Customer Segmetation")
+
+#barplot with specific color for its bar
+library(RColorBrewer)
+color=brewer.pal(6, "Set2")
+ggplot(plotdata, aes(x = reorder(Segment, -pcnt),y=pcnt))+geom_bar(stat="identity",fill=color)+theme(axis.text.x=element_text(angle=90,hjust=1))+
+geom_text(aes(label=pcntlab), vjust=-0.25)+scale_y_continuous(labels=percent)+labs(x="Segment", y= "Percent", title="Barplot for Customer Segmetation")
+
+#data viz using pie chat
+library("plotrix")
+x=table(rfm_df$Segment)
+piepercent=round(100*x/sum(x),1)
+lab=paste(names(x)," ", piepercent,"%")
+plotrix::pie3D(x,labels=lab,main="Pie Chart for Customer Segmentation",explode=.1)
+

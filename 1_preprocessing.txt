@@ -1,0 +1,88 @@
+#importing data
+setwd("D:/#my projects") 
+data=read.csv("sales.csv",sep=";")
+str(data)
+##'data.frame':	9994 obs. of  24 variables:
+## $ RowID       : int  7981 740 741 742 1760 5328 7181 7475 7476 7477 ...
+## $ OrderID     : chr  "CA-2014-103800" "CA-2014-112326" "CA-2014-112326" "CA-2014-112326" ...
+## $ OrderDate   : chr  "03/01/2014" "04/01/2014" "04/01/2014" "04/01/2014" ...
+## $ Year        : int  2014 2014 2014 2014 2014 2014 2014 2014 2014 2014 ...
+## $ Month       : chr  "January" "January" "January" "January" ...
+## $ Day         : int  3 4 4 4 5 6 6 6 6 6 ...
+## $ ShipMode    : chr  "Standard Class" "Standard Class" "Standard Class" "Standard Class" ...
+## $ CustomerID  : chr  "DP-13000" "PO-19195" "PO-19195" "PO-19195" ...
+## $ CustomerName: chr  "Darren Powers" "Phillina Ober" "Phillina Ober" "Phillina Ober" ...
+## $ Segment     : chr  "Consumer" "Home Office" "Home Office" "Home Office" ...
+## $ Country     : chr  "United States" "United States" "United States" "United States" ...
+## $ City        : chr  "Houston" "Naperville" "Naperville" "Naperville" ...
+## $ State       : chr  "Texas" "Illinois" "Illinois" "Illinois" ...
+## $ PostalCode  : int  77095 60540 60540 60540 19143 90049 30605 42420 42420 42420 ...
+## $ Region      : chr  "Central" "Central" "Central" "Central" ...
+## $ ProductID   : chr  "OFF-PA-10000174" "OFF-LA-10003223" "OFF-ST-10002743" "OFF-BI-10004094" ...
+## $ Category    : chr  "Office Supplies" "Office Supplies" "Office Supplies" "Office Supplies" ...
+## $ Sub.Category: chr  "Paper" "Labels" "Storage" "Binders" ...
+## $ ProductName : chr  "Message Book, Wirebound, Four 5 1/2\" X 4\" Forms/Pg., 200 Dupl. Sets/Book" "Avery 508" "SAFCO Boltless Steel Shelving" "GBC Standard Plastic Binding Systems Combs" ...
+## $ Sales       : chr  "16,448" "11,784" "272,736" "3,54" ...
+## $ Quantity    : int  2 3 3 2 3 3 3 9 2 2 ...
+## $ Discount    : chr  "0,2" "0,2" "0,2" "0,8" ...
+## $ Profit      : chr  "5,5512" "4,2717" "-64,7748" "-5,487" ...
+## $ X           : logi  NA NA NA NA NA NA ...
+
+
+#checking data needed that contain null (OrderDate, CustomerID, Sales)
+colSums(is.na(data))
+
+#remove unnecessary field ("X")
+data=subset(data,select=-(X))
+
+#if there were null values in the needed data, the sytax below removes rows that contain null values
+#data=na.omit(data)
+
+#covert "OrderDate" into date format
+data$OrderDate=as.Date(data$OrderDate, "%d/%m/%Y")
+
+#convert values in "Sales" field as numeric
+data$Sales= as.numeric(sub(",",".",sub(".",",",data$Sales,fixed=TRUE),fixed=TRUE))
+summary(data)
+##     RowID        OrderID            OrderDate               Year     
+## Min.   :   1   Length:9994        Min.   :0001-01-20   Min.   :2014  
+## 1st Qu.:2499   Class :character   1st Qu.:0008-08-20   1st Qu.:2015  
+## Median :4998   Mode  :character   Median :0015-12-20   Median :2016  
+## Mean   :4998                      Mean   :0016-02-01   Mean   :2016  
+## 3rd Qu.:7496                      3rd Qu.:0023-07-20   3rd Qu.:2017  
+## Max.   :9994                      Max.   :0031-12-20   Max.   :2017  
+##    Month                Day          ShipMode          CustomerID       
+## Length:9994        Min.   : 1.00   Length:9994        Length:9994       
+## Class :character   1st Qu.: 8.00   Class :character   Class :character  
+## Mode  :character   Median :15.00   Mode  :character   Mode  :character  
+##                    Mean   :15.47                                        
+##                    3rd Qu.:23.00                                        
+##                    Max.   :31.00                                        
+## CustomerName         Segment            Country              City          
+## Length:9994        Length:9994        Length:9994        Length:9994       
+## Class :character   Class :character   Class :character   Class :character  
+## Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                            
+##                                                                           
+##                                                                            
+##    State             PostalCode       Region           ProductID        
+## Length:9994        Min.   : 1040   Length:9994        Length:9994       
+## Class :character   1st Qu.:23223   Class :character   Class :character  
+## Mode  :character   Median :56431   Mode  :character   Mode  :character  
+##                    Mean   :55190                                        
+##                    3rd Qu.:90008                                        
+##                    Max.   :99301                                        
+##   Category         Sub.Category       ProductName           Sales          
+## Length:9994        Length:9994        Length:9994        Length:9994       
+## Class :character   Class :character   Class :character   Class :character  
+## Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                            
+##                                                                            
+##                                                                            
+##    Quantity       Discount            Profit         
+## Min.   : 1.00   Length:9994        Length:9994       
+## 1st Qu.: 2.00   Class :character   Class :character  
+## Median : 3.00   Mode  :character   Mode  :character  
+## Mean   : 3.79                                        
+## 3rd Qu.: 5.00                                        
+## Max.   :14.00
