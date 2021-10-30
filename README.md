@@ -15,5 +15,6 @@ It is numeric values obtained from subtracting the customer's last time purchase
 
 The data for this analysis is available [here.](https://drive.google.com/file/d/1BJQtz_Xw8FwfiPL5Dg0gjUF8xvmafNJO/view?usp=drivesdk)
 
-##Customer Segmentation Result
+## Customer Segmentation Result
 The number of customer segments can be done according to the requirements. In this case, we choose to divide the customer into 6 segments as shown in the barplot below.
+![barplot](https://drive.google.com/file/d/1Bf2P1YS5PJznzEpzbZ1eF43t6PxzQHIL/view?usp=drivesdk)
