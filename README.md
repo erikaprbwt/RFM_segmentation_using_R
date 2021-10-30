@@ -20,7 +20,7 @@ The number of customer segments can be done according to the requirements. In th
 
 ![Rplot colorbrewer](https://user-images.githubusercontent.com/92423145/139538123-0cf185d8-de42-415c-9f39-1c1aacc9b5a2.jpeg)
 
-After the customer segmentation is formed, the next step is to determine the needed actions treat customers in each segments.
+After the customer segmentation is formed, the next step is to determine the needed actions to treat customers in each segments.
 1. Loyalist: These customers love to buy our brand. Reward them so that they will promote our brand.
 
 2. Potential Loyalists: Keep them engaged by coming up with attractive offers and festive discounts.
